@@ -6,9 +6,12 @@ import android.graphics.Color
 import android.util.Log
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.LinearLayout
+import androidx.camera.core.CameraEffect
+import androidx.camera.core.CameraEffect.PREVIEW
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
+import androidx.camera.integration.view.ToneMappingSurfaceEffect
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Image
@@ -62,7 +65,8 @@ private fun CameraContent(
     onPhotoCaptured: (Bitmap) -> Unit,
     lastCapturedPhoto: Bitmap? = null
 ) {
-
+    // Set up the surface processor.
+    var surfaceProcessor: ToneMappingSurfaceProcessor = remember { ToneMappingSurfaceProcessor() }
     val context: Context = LocalContext.current
     val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
     val cameraController: LifecycleCameraController = remember { LifecycleCameraController(context) }
@@ -90,6 +94,12 @@ private fun CameraContent(
                         implementationMode = PreviewView.ImplementationMode.COMPATIBLE
                         scaleType = PreviewView.ScaleType.FILL_START
                     }.also { previewView ->
+
+                        var surfaceEffectTarget = 0
+                        surfaceEffectTarget = PREVIEW
+                        val effect = mutableSetOf<CameraEffect>()
+                        effect.add(ToneMappingSurfaceEffect(surfaceEffectTarget, surfaceProcessor))
+                        cameraController.setEffects(effect)
                         previewView.controller = cameraController
                         cameraController.bindToLifecycle(lifecycleOwner)
                     }
