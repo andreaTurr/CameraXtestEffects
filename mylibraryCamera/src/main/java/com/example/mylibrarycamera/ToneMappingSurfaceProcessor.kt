@@ -28,9 +28,9 @@ import androidx.camera.core.SurfaceProcessor
 import androidx.camera.core.SurfaceRequest
 import androidx.camera.core.impl.utils.executor.CameraXExecutors.newHandlerExecutor
 import androidx.camera.core.processing.OpenGlRenderer
-import androidx.camera.core.processing.ShaderProvider
 import androidx.core.util.Preconditions.checkState
 import com.example.mylibrarycamera.gles.FullFrameRect
+import com.example.mylibrarycamera.gles.ShaderProvider
 import com.example.mylibrarycamera.gles.Texture2dProgram
 import java.util.concurrent.Executor
 
@@ -43,24 +43,24 @@ class ToneMappingSurfaceProcessor : SurfaceProcessor, OnFrameAvailableListener {
 
     companion object {
 //        // A fragment shader that applies a yellow hue.
-//        private val TONE_MAPPING_SHADER_PROVIDER = object : ShaderProvider {
-//            override fun createFragmentShader(sampler: String, fragCoords: String): String {
-//                return """
-//                    #extension GL_OES_EGL_image_external : require
-//                    precision mediump float;
-//                    uniform samplerExternalOES $sampler;
-//                    varying vec2 $fragCoords;
-//                    void main() {
-//                      vec4 sampleColor = texture2D($sampler, $fragCoords);
-//                      gl_FragColor = vec4(
-//                           sampleColor.r * 0.5 + sampleColor.g * 0.8 + sampleColor.b * 0.3,
-//                           sampleColor.r * 0.4 + sampleColor.g * 0.7 + sampleColor.b * 0.2,
-//                           sampleColor.r * 0.3 + sampleColor.g * 0.5 + sampleColor.b * 0.1,
-//                           1.0);
-//                     }
-//                    """
-//            }
-//        }
+        private val TONE_MAPPING_SHADER_PROVIDER = object : ShaderProvider {
+            override fun createFragmentShader(sampler: String, fragCoords: String): String {
+                return """
+                    #extension GL_OES_EGL_image_external : require
+                    precision mediump float;
+                    uniform samplerExternalOES $sampler;
+                    varying vec2 $fragCoords;
+                    void main() {
+                      vec4 sampleColor = texture2D($sampler, $fragCoords);
+                      gl_FragColor = vec4(
+                           sampleColor.r * 0.5 + sampleColor.g * 0.8 + sampleColor.b * 0.3,
+                           sampleColor.r * 0.4 + sampleColor.g * 0.7 + sampleColor.b * 0.2,
+                           sampleColor.r * 0.3 + sampleColor.g * 0.5 + sampleColor.b * 0.1,
+                           1.0);
+                     }
+                    """
+            }
+        }
 
         private const val GL_THREAD_NAME = "ToneMappingSurfaceProcessor"
     }
@@ -85,20 +85,13 @@ class ToneMappingSurfaceProcessor : SurfaceProcessor, OnFrameAvailableListener {
     init {
         glThread.start()
         glHandler = Handler(glThread.looper)
-        glExecutor = Executor {  }
+        //glExecutor = Executor {  }
         glExecutor = MyHandlerScheduledExecutorService(glHandler)
         glExecutor.execute {
             //glRenderer.init(DynamicRange.SDR, TONE_MAPPING_SHADER_PROVIDER)
         }
     }
-    init {
-        glThread.start()
-        glHandler = Handler(glThread.looper)
-        glExecutor = newHandlerExecutor(glHandler)
-        glExecutor.execute {
-            glRenderer.init(DynamicRange.SDR, TONE_MAPPING_SHADER_PROVIDER)
-        }
-    }
+
     override fun onInputSurface(surfaceRequest: SurfaceRequest) {
         //checkGlThread()
         if (isReleased) {
