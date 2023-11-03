@@ -11,7 +11,6 @@ import androidx.camera.core.CameraEffect.PREVIEW
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
-import androidx.camera.integration.view.ToneMappingSurfaceEffect
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Image
@@ -43,6 +42,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.mylibrarycamera.ToneMappingSurfaceProcessor
+import com.example.mylibrarycamera.ToneMappingSurfaceEffect
 import de.yanneckreiss.cameraxtutorial.core.utils.rotateBitmap
 import org.koin.androidx.compose.koinViewModel
 import java.util.concurrent.Executor
@@ -95,11 +96,11 @@ private fun CameraContent(
                         scaleType = PreviewView.ScaleType.FILL_START
                     }.also { previewView ->
 
-//                        var surfaceEffectTarget = 0
-//                        surfaceEffectTarget = PREVIEW
-//                        val effect = mutableSetOf<CameraEffect>()
-//                        effect.add(ToneMappingSurfaceEffect(surfaceEffectTarget, surfaceProcessor))
-//                        cameraController.setEffects(effect)
+                        var surfaceEffectTarget = 0
+                        surfaceEffectTarget = PREVIEW
+                        val effect = mutableSetOf<CameraEffect>()
+                        effect.add(ToneMappingSurfaceEffect(surfaceEffectTarget, surfaceProcessor))
+                        cameraController.setEffects(effect)
                         previewView.controller = cameraController
                         cameraController.bindToLifecycle(lifecycleOwner)
                     }

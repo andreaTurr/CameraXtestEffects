@@ -224,17 +224,13 @@ class CircularEncoder(
         private val mCallback: Callback
     ) : Thread() {
         private var mEncodedFormat: MediaFormat? = null
-        private val mBufferInfo: MediaCodec.BufferInfo
+        private val mBufferInfo: MediaCodec.BufferInfo = MediaCodec.BufferInfo()
         private var mHandler: EncoderHandler? = null
         private var mFrameNum = 0
         private val mLock = Object()
 
         @Volatile
         private var mReady = false
-
-        init {
-            mBufferInfo = MediaCodec.BufferInfo()
-        }
 
         /**
          * Thread entry point.

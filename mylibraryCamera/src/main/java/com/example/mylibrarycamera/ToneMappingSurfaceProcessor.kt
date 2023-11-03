@@ -20,6 +20,7 @@ import android.graphics.SurfaceTexture
 import android.graphics.SurfaceTexture.OnFrameAvailableListener
 import android.os.Handler
 import android.os.HandlerThread
+import android.util.Log
 import android.view.Surface
 import androidx.annotation.VisibleForTesting
 import androidx.camera.core.DynamicRange
@@ -37,7 +38,8 @@ import java.util.concurrent.Executor
  * <p>The thread safety is guaranteed by using the main thread.
  */
 class ToneMappingSurfaceProcessor : SurfaceProcessor, OnFrameAvailableListener {
-
+    private val TAG = ToneMappingSurfaceProcessor::class.simpleName
+    private val VERBOSE = true
     companion object {
 //        // A fragment shader that applies a yellow hue.
         private val TONE_MAPPING_SHADER_PROVIDER = object : ShaderProvider {
@@ -164,6 +166,7 @@ class ToneMappingSurfaceProcessor : SurfaceProcessor, OnFrameAvailableListener {
         return glExecutor
     }
 
+    var previusOutputSurfacesEntries = 0;
     override fun onFrameAvailable(surfaceTexture: SurfaceTexture) {
         checkGlThread()
         if (isReleased) {
@@ -171,6 +174,12 @@ class ToneMappingSurfaceProcessor : SurfaceProcessor, OnFrameAvailableListener {
         }
         surfaceTexture.updateTexImage()
         surfaceTexture.getTransformMatrix(textureTransform)
+        if (VERBOSE)
+            //if (previusOutputSurfacesEntries != outputSurfaces.entries.size)
+            {
+                Log.d(TAG, "onFrameAvailable: outputSurfaces.entries.size = $(outputSurfaces.entries.size)")
+                previusOutputSurfacesEntries = outputSurfaces.entries.size;
+            }
         for (entry in outputSurfaces.entries.iterator()) {
             val surface = entry.value
             val surfaceOutput = entry.key

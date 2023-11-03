@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.yanneckreiss.cameraxtutorial.ui.features.camera.photo_capture;
+package com.example.mylibrarycamera;
 
 import android.hardware.Camera;
 import android.util.Log;

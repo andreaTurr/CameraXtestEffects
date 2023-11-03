@@ -35,6 +35,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.camera.core.CameraX
+import com.example.mylibrarycamera.CameraUtils
 import de.yanneckreiss.cameraxtutorial.R
 import de.yanneckreiss.cameraxtutorial.ui.AspectFrameLayout
 import de.yanneckreiss.cameraxtutorial.ui.features.camera.gles.EglCore
