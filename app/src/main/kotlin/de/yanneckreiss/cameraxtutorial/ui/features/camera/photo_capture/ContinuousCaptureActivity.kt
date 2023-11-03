@@ -362,7 +362,7 @@ class ContinuousCaptureActivity : Activity(), SurfaceHolder.Callback,
         // The display surface that we use for the SurfaceView, and the encoder surface we
         // use for video, use the same EGL context.
         mEglCore = EglCore(null, EglCore.FLAG_RECORDABLE)
-        mDisplaySurface = WindowSurface(mEglCore, holder.getSurface(), false)
+        mDisplaySurface = WindowSurface(mEglCore!!, holder.getSurface(), false)
         mDisplaySurface!!.makeCurrent()
         mFullFrameBlit = FullFrameRect(
             Texture2dProgram(Texture2dProgram.ProgramType.TEXTURE_EXT)
@@ -395,7 +395,7 @@ class ContinuousCaptureActivity : Activity(), SurfaceHolder.Callback,
         } catch (ioe: IOException) {
             throw RuntimeException(ioe)
         }
-        mEncoderSurface = WindowSurface(mEglCore, mCircEncoder!!.inputSurface, true)
+        mEncoderSurface = WindowSurface(mEglCore!!, mCircEncoder!!.inputSurface, true)
         updateControls()
     }
 

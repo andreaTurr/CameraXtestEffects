@@ -44,7 +44,7 @@ class Texture2dProgram(
     private val maTextureCoordLoc: Int
     private var mTextureTarget = 0
     private val mKernel = FloatArray(KERNEL_SIZE)
-    private var mTexOffset: FloatArray
+    private lateinit var mTexOffset: FloatArray
     private var mColorAdjust = 0f
 
     /**

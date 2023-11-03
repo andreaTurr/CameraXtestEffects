@@ -26,9 +26,6 @@ import androidx.camera.core.DynamicRange
 import androidx.camera.core.SurfaceOutput
 import androidx.camera.core.SurfaceProcessor
 import androidx.camera.core.SurfaceRequest
-import androidx.camera.core.impl.utils.executor.CameraXExecutors.newHandlerExecutor
-import androidx.camera.core.processing.OpenGlRenderer
-import androidx.core.util.Preconditions.checkState
 import com.example.mylibrarycamera.gles.FullFrameRect
 import com.example.mylibrarycamera.gles.ShaderProvider
 import com.example.mylibrarycamera.gles.Texture2dProgram
@@ -70,7 +67,7 @@ class ToneMappingSurfaceProcessor : SurfaceProcessor, OnFrameAvailableListener {
     private var glExecutor: Executor
 
     // Members below are only accessed on GL thread.
-    //private val glRenderer: OpenGlRenderer = OpenGlRenderer()
+    private val glRenderer: OpenGlRenderer = OpenGlRenderer()
     private val outputSurfaces: MutableMap<SurfaceOutput, Surface> = mutableMapOf()
     private val textureTransform: FloatArray = FloatArray(16)
     private val surfaceTransform: FloatArray = FloatArray(16)
@@ -88,12 +85,12 @@ class ToneMappingSurfaceProcessor : SurfaceProcessor, OnFrameAvailableListener {
         //glExecutor = Executor {  }
         glExecutor = MyHandlerScheduledExecutorService(glHandler)
         glExecutor.execute {
-            //glRenderer.init(DynamicRange.SDR, TONE_MAPPING_SHADER_PROVIDER)
+            glRenderer.init(DynamicRange.SDR, TONE_MAPPING_SHADER_PROVIDER)
         }
     }
 
     override fun onInputSurface(surfaceRequest: SurfaceRequest) {
-        //checkGlThread()
+        checkGlThread()
         if (isReleased) {
             surfaceRequest.willNotProvideSurface()
             return
@@ -115,27 +112,9 @@ class ToneMappingSurfaceProcessor : SurfaceProcessor, OnFrameAvailableListener {
         }
         surfaceTexture.setOnFrameAvailableListener(this, glHandler)
     }
-    /*
 
-  SurfaceTexture surfaceTexture = SurfaceTexture(textureName);
-  surfaceTexture.setDefaultBufferSize(request.resolution.width, request.resolution.height);
-  Surface surface = Surface(surfaceTexture);
-
-  // Provide the Surface to CameraX, and cleanup when it's no longer used.
-  surfaceRequest.provideSurface(surface, executor, result -> {
-      surfaceTexture.setOnFrameAvailableListener(null)
-      surfaceTexture.release()
-      surface.release()
-  });
-
-  // Listen to the incoming frames.
-  surfaceTexture.setOnFrameAvailableListener(surfaceTexture -> {
-      // Process the incoming frames and draw to the output Surface from #onOutputSurface
-  }, handler);
-
-    * */
     override fun onOutputSurface(surfaceOutput: SurfaceOutput) {
-        //checkGlThread()
+        checkGlThread()
         outputSurfaceProvided = true
         if (isReleased) {
             surfaceOutput.close()
@@ -144,10 +123,10 @@ class ToneMappingSurfaceProcessor : SurfaceProcessor, OnFrameAvailableListener {
         val surface = surfaceOutput.getSurface(glExecutor) {
             surfaceOutput.close()
             outputSurfaces.remove(surfaceOutput)?.let { removedSurface ->
-                //glRenderer.unregisterOutputSurface(removedSurface)
+                glRenderer.unregisterOutputSurface(removedSurface)
             }
         }
-        //glRenderer.registerOutputSurface(surface)
+        glRenderer.registerOutputSurface(surface)
         outputSurfaces[surfaceOutput] = surface
     }
 
@@ -163,7 +142,7 @@ class ToneMappingSurfaceProcessor : SurfaceProcessor, OnFrameAvailableListener {
     }
 
     private fun releaseInternal() {
-        //checkGlThread()
+        checkGlThread()
         if (!isReleased) {
             // Once release is called, we can stop sending frame to output surfaces.
             for (surfaceOutput in outputSurfaces.keys) {
@@ -176,16 +155,17 @@ class ToneMappingSurfaceProcessor : SurfaceProcessor, OnFrameAvailableListener {
         }
     }
 
-//    private fun checkGlThread() {
-//        checkState(GL_THREAD_NAME == Thread.currentThread().name)
-//    }
+    private fun checkGlThread() {
+        if(GL_THREAD_NAME == Thread.currentThread().name)
+            throw IllegalStateException("checkGlThread IllegalStateException")
+    }
 
     fun getGlExecutor(): Executor {
         return glExecutor
     }
 
     override fun onFrameAvailable(surfaceTexture: SurfaceTexture) {
-        //checkGlThread()
+        checkGlThread()
         if (isReleased) {
             return
         }
@@ -196,7 +176,7 @@ class ToneMappingSurfaceProcessor : SurfaceProcessor, OnFrameAvailableListener {
             val surfaceOutput = entry.key
 
             surfaceOutput.updateTransformMatrix(surfaceTransform, textureTransform)
-            //glRenderer.render(surfaceTexture.timestamp, surfaceTransform, surface)
+            glRenderer.render(surfaceTexture.timestamp, surfaceTransform, surface)
 
         }
     }

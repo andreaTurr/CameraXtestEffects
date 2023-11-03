@@ -111,9 +111,9 @@ object GeneratedTexture {
 
             // pre-multiply colors and store in buffer
             val alphaM = alpha / 255.0f
-            buf[i] = (red * alphaM).toByte()
-            buf[i + 1] = (green * alphaM).toByte()
-            buf[i + 2] = (blue * alphaM).toByte()
+            buf[i] = (red * alphaM).toInt().toByte()
+            buf[i + 1] = (green * alphaM).toInt().toByte()
+            buf[i + 2] = (blue * alphaM).toInt().toByte()
             buf[i + 3] = alpha.toByte()
             i += BYTES_PER_PIXEL
         }
@@ -180,9 +180,9 @@ object GeneratedTexture {
 
                 // pre-multiply colors and store in buffer
                 val alphaM = alpha / 255.0f
-                buf[offset] = (red * alphaM).toByte()
-                buf[offset + 1] = (green * alphaM).toByte()
-                buf[offset + 2] = (blue * alphaM).toByte()
+                buf[offset] = (red * alphaM).toInt().toByte()
+                buf[offset + 1] = (green * alphaM).toInt().toByte()
+                buf[offset + 2] = (blue * alphaM).toInt().toByte()
                 buf[offset + 3] = alpha.toByte()
             }
         }

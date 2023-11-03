@@ -95,11 +95,11 @@ private fun CameraContent(
                         scaleType = PreviewView.ScaleType.FILL_START
                     }.also { previewView ->
 
-                        var surfaceEffectTarget = 0
-                        surfaceEffectTarget = PREVIEW
-                        val effect = mutableSetOf<CameraEffect>()
-                        effect.add(ToneMappingSurfaceEffect(surfaceEffectTarget, surfaceProcessor))
-                        cameraController.setEffects(effect)
+//                        var surfaceEffectTarget = 0
+//                        surfaceEffectTarget = PREVIEW
+//                        val effect = mutableSetOf<CameraEffect>()
+//                        effect.add(ToneMappingSurfaceEffect(surfaceEffectTarget, surfaceProcessor))
+//                        cameraController.setEffects(effect)
                         previewView.controller = cameraController
                         cameraController.bindToLifecycle(lifecycleOwner)
                     }

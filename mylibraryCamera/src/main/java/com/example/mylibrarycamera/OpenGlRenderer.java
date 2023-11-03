@@ -19,13 +19,9 @@ package com.example.mylibrarycamera;
 import static android.opengl.GLES11Ext.GL_TEXTURE_EXTERNAL_OES;
 
 import static androidx.camera.core.DynamicRange.BIT_DEPTH_10_BIT;
-import static androidx.camera.core.DynamicRange.BIT_DEPTH_UNSPECIFIED;
 import static androidx.camera.core.DynamicRange.ENCODING_HDR_UNSPECIFIED;
 import static androidx.camera.core.DynamicRange.ENCODING_SDR;
 import static androidx.camera.core.DynamicRange.ENCODING_UNSPECIFIED;
-import static androidx.camera.core.ImageProcessingUtil.copyByteBufferToBitmap;
-import static androidx.camera.core.ImageProcessingUtil.nativeCopyBetweenByteBufferAndBitmap;
-import static androidx.core.util.Preconditions.checkArgument;
 
 import static java.util.Objects.requireNonNull;
 
@@ -48,9 +44,6 @@ import androidx.annotation.VisibleForTesting;
 import androidx.annotation.WorkerThread;
 import androidx.camera.core.DynamicRange;
 import androidx.camera.core.SurfaceOutput;
-import androidx.core.util.Preconditions;
-
-import com.google.auto.value.AutoValue;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -150,7 +143,7 @@ public final class OpenGlRenderer {
 
     private static final int SIZEOF_FLOAT = 4;
     private static final OutputSurface NO_OUTPUT_SURFACE =
-            OutputSurface.of(EGL14.EGL_NO_SURFACE, 0, 0);
+            new OutputSurface(EGL14.EGL_NO_SURFACE, 0, 0);
 
     private final AtomicBoolean mInitialized = new AtomicBoolean(false);
     @VisibleForTesting
@@ -336,20 +329,20 @@ public final class OpenGlRenderer {
      * @param textureTransform the transformation matrix.
      *                         See: {@link SurfaceOutput#updateTransformMatrix(float[], float[])}
      */
-    @NonNull
-    public Bitmap snapshot(@NonNull Size size, @NonNull float[] textureTransform) {
-        // Allocate buffer.
-        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(
-                size.getWidth() * size.getHeight() * PIXEL_STRIDE);
-        // Take a snapshot.
-        snapshot(byteBuffer, size, textureTransform);
-        // Create a Bitmap and copy the bytes over.
-        Bitmap bitmap = Bitmap.createBitmap(
-                size.getWidth(), size.getHeight(), Bitmap.Config.ARGB_8888);
-        byteBuffer.rewind();
-        copyByteBufferToBitmap(bitmap, byteBuffer, size.getWidth() * PIXEL_STRIDE);
-        return bitmap;
-    }
+//    @NonNull
+//    public Bitmap snapshot(@NonNull Size size, @NonNull float[] textureTransform) {
+//        // Allocate buffer.
+//        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(
+//                size.getWidth() * size.getHeight() * PIXEL_STRIDE);
+//        // Take a snapshot.
+//        snapshot(byteBuffer, size, textureTransform);
+//        // Create a Bitmap and copy the bytes over.
+//        Bitmap bitmap = Bitmap.createBitmap(
+//                size.getWidth(), size.getHeight(), Bitmap.Config.ARGB_8888);
+//        byteBuffer.rewind();
+//        copyByteBufferToBitmap(bitmap, byteBuffer, size.getWidth() * PIXEL_STRIDE);
+//        return bitmap;
+//    }
 
     /**
      * Copies information from a ByteBuffer to the address of the Bitmap
@@ -359,14 +352,14 @@ public final class OpenGlRenderer {
      * @param bufferStride      the stride of the ByteBuffer
      *
      */
-    public static void copyByteBufferToBitmap(@NonNull Bitmap bitmap,
-                                              @NonNull ByteBuffer byteBuffer, int bufferStride) {
-        int bitmapStride = bitmap.getRowBytes();
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
-        nativeCopyBetweenByteBufferAndBitmap(bitmap, byteBuffer, bufferStride, bitmapStride, width,
-                height, true);
-    }
+//    public static void copyByteBufferToBitmap(@NonNull Bitmap bitmap,
+//                                              @NonNull ByteBuffer byteBuffer, int bufferStride) {
+//        int bitmapStride = bitmap.getRowBytes();
+//        int width = bitmap.getWidth();
+//        int height = bitmap.getHeight();
+//        nativeCopyBetweenByteBufferAndBitmap(bitmap, byteBuffer, bufferStride, bitmapStride, width,
+//                height, true);
+//    }
 
     /**
      * Takes a snapshot of the current external texture and stores it in the given byte buffer.
@@ -828,7 +821,7 @@ public final class OpenGlRenderer {
         }
 
         Size size = getSurfaceSize(eglSurface);
-        return OutputSurface.of(eglSurface, size.getWidth(), size.getHeight());
+        return new OutputSurface(eglSurface, size.getWidth(), size.getHeight());
     }
 
     private void removeOutputSurfaceInternal(@NonNull Surface surface, boolean unregister) {
@@ -933,20 +926,27 @@ public final class OpenGlRenderer {
             throw new IllegalStateException(op + ": GL error 0x" + Integer.toHexString(error));
         }
     }
-
-    @AutoValue
-    abstract static class OutputSurface {
-
-        @NonNull
-        static OutputSurface of(@NonNull EGLSurface eglSurface, int width, int height) {
-            return new OutputSurface(eglSurface, width, height);
+    static class OutputSurface {
+        EGLSurface eglSurface;
+        int width;
+        int height;
+        public OutputSurface(EGLSurface eglSurface, int width, int height) {
+            this.eglSurface = eglSurface;
+            this.width = width;
+            this.height = height;
         }
 
         @NonNull
-        abstract EGLSurface getEglSurface();
+        EGLSurface getEglSurface(){
+            return  eglSurface;
+        };
 
-        abstract int getWidth();
+        int getWidth(){
+            return width;
+        }
 
-        abstract int getHeight();
+         int getHeight(){
+            return height;
+         }
     }
 }
