@@ -115,6 +115,14 @@ open class EglSurfaceBase protected constructor( // EglCore object we're associa
     }
 
     /**
+     * Makes our EGL context and surface current for drawing, using the supplied surface
+     * for drawing.
+     */
+    fun makeCurrentDrawTo(drawSurface: EglSurfaceBase) {
+        mEglCore.makeCurrent(drawSurface.mEGLSurface, mEGLSurface)
+    }
+
+    /**
      * Calls eglSwapBuffers.  Use this to "publish" the current frame.
      *
      * @return false on failure

@@ -27,7 +27,7 @@ class Texture2dProgram(
     /**
      * Returns the program type.
      */
-    val programType: ProgramType
+    private val programType: ProgramType
 ) {
     enum class ProgramType {
         TEXTURE_2D, TEXTURE_EXT, TEXTURE_EXT_BW, TEXTURE_EXT_FILT

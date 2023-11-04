@@ -70,14 +70,6 @@ class MyHandlerScheduledExecutorService(private val mHandler: Handler) : Abstrac
         return schedule(wrapper, delay, unit)
     }
 
-    override fun <V : Any?> schedule(
-        p0: Callable<V>?,
-        p1: Long,
-        p2: TimeUnit?
-    ): ScheduledFuture<V> {
-        TODO("Not yet implemented")
-    }
-
     override fun <V> schedule(
         callable: Callable<V>,
         delay: Long,

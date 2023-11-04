@@ -6,7 +6,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".ui.features.camera.photo_capture.ContinuousCaptureActivity" >
+    tools:context="de.cameraxtutorial.ui.features.camera.photo_capture.ContinuousCaptureActivity" >
 
     <Button
         android:id="@+id/capture_button"
@@ -26,7 +26,7 @@
         android:layout_toEndOf="@id/capture_button"
         android:text="@string/secondsOfVideo" />
 
-    <de.yanneckreiss.cameraxtutorial.ui.AspectFrameLayout
+    <de.cameraxtutorial.ui.AspectFrameLayout
         android:id="@+id/continuousCapture_afl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -42,7 +42,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center" />
 
-    </de.yanneckreiss.cameraxtutorial.ui.AspectFrameLayout>
+    </de.cameraxtutorial.ui.AspectFrameLayout>
 
     <TextView
         android:id="@+id/recording_text"

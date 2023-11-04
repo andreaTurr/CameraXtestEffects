@@ -88,7 +88,8 @@ object GlUtil {
         GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, compiled, 0)
         if (compiled[0] == 0) {
             Log.e(TAG, "Could not compile shader $shaderType:")
-            Log.e(TAG, " " + GLES20.glGetShaderInfoLog(shader))
+            val shaderInfoLog = GLES20.glGetShaderInfoLog(shader)
+            Log.e(TAG, shaderInfoLog)
             GLES20.glDeleteShader(shader)
             shader = 0
         }
